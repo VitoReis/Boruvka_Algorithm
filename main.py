@@ -2,27 +2,29 @@ import numpy as np
 from igraph import *
 
 def main():
-    graph = Graph.Read_Ncol('myTree.ncol', directed= False)
+    graph = Graph.Read_Ncol('myGraph.ncol', directed=False)
 
-    forest = []
-    for vertex in graph.vs:
-        newTree = []
-        newTree.append(vertex)
-        forest.append(newTree)      # Cada vertex vira uma floresta(lista) dentro da lista
-
-    a = []                      # Arestas adicionadas
+    edges = []
+    newEdge = None
     i = 0
-    while len(a) < len(forest[i]):
-        for t in range(forest[i]):
+    while i < len(graph.vs):        # Para cada arvore na lista
+        for vi in graph.vs:         # Para cada vertice i nessa arvore
+            add = False
             value = np.inf
-            for f in forest and f != forest[i]:     # Para cada floresta na lista e
-                                                    # essa floresta é diferente da atual
-                for edge in graph.es:
-                    if edge.source == forest[i][0]:
-                        if forest[i] < value:
-
-
+            for edge in graph.es:   # Encontra a aresta de menor peso partindo de i para j
+                if edge.source == vi.index and edge.target != vi.index and edge['weight'] < value:
+                    value = edge['weight']
+                    newEdge = edge
+                    add = True
+            if add:
+                if not newEdge in edges:
+                    edges.append(newEdge)
         i += 1
+
+    print('*'*5 + ' Paths ' + '*'*5)
+    for i in range(0, len(edges)):
+        print(f'{edges[i].source} -> {edges[i].target}')
+    print('*'*17)
 
 
 if __name__ == '__main__':
